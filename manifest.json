@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "AI Field Assistant",
+  "version": "1.0.0",
+  "description": "Automatically fill web form fields using AI based on page context",
+  
+  "permissions": [
+    "webRequest",
+    "storage",
+    "activeTab",
+    "sidePanel"
+  ],
+  
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  
+  "background": {
+    "service_worker": "background.js"
+  },
+  
+  "content_scripts": [{
+    "matches": ["http://*/*", "https://*/*"],
+    "js": ["debug.js", "content.js"],
+    "run_at": "document_end"
+  }],
+  
+  "options_page": "options.html",
+  
+  "action": {
+    "default_title": "AI Field Assistant"
+  },
+  
+  "side_panel": {
+    "default_path": "sidebar.html"
+  }
+}

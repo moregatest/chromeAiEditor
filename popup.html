@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Field Assistant</title>
+  <style>
+    body {
+      width: 300px;
+      padding: 15px;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .header h1 {
+      margin: 0;
+      font-size: 18px;
+      color: #333;
+    }
+    
+    .status {
+      padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      font-size: 13px;
+    }
+    
+    .status.active {
+      background: #dff0d8;
+      color: #3c763d;
+      border: 1px solid #d6e9c6;
+    }
+    
+    .status.inactive {
+      background: #f2dede;
+      color: #a94442;
+      border: 1px solid #ebccd1;
+    }
+    
+    .status.mock {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeaa7;
+    }
+    
+    .button {
+      display: block;
+      width: 100%;
+      padding: 8px 12px;
+      margin: 5px 0;
+      border: none;
+      border-radius: 4px;
+      background: #4CAF50;
+      color: white;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+      font-size: 13px;
+    }
+    
+    .button:hover {
+      background: #45a049;
+    }
+    
+    .info {
+      font-size: 12px;
+      color: #666;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #eee;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>AI Field Assistant</h1>
+  </div>
+  
+  <div id="status" class="status inactive">
+    Checking status...
+  </div>
+  
+  <a href="options.html" target="_blank" class="button">Open Settings</a>
+  
+  <div class="info">
+    <strong>How to use:</strong><br>
+    Visit a webpage that includes the response header <code>X-AI-Assist: on</code> to automatically trigger field filling based on page context.
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>

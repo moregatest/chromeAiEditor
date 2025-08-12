@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Field Assistant - Settings</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    
+    .section {
+      margin-bottom: 30px;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    
+    .section h2 {
+      margin-top: 0;
+      color: #333;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    
+    input[type="text"], input[type="url"], input[type="number"], select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    
+    .form-row {
+      display: flex;
+      gap: 15px;
+    }
+    
+    .form-row .form-group {
+      flex: 1;
+    }
+    
+    .form-row button {
+      flex: 0 0 auto;
+      margin-left: 10px;
+    }
+    
+    .form-row button:first-child {
+      margin-left: 0;
+    }
+    
+    .button {
+      background: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    
+    .button:hover {
+      background: #45a049;
+    }
+    
+    .button.secondary {
+      background: #f44336;
+    }
+    
+    .button.secondary:hover {
+      background: #da190b;
+    }
+    
+    .status {
+      margin-top: 10px;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    
+    .status.success {
+      background: #dff0d8;
+      color: #3c763d;
+      border: 1px solid #d6e9c6;
+    }
+    
+    .status.warning {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeaa7;
+    }
+    
+    .mock-notice {
+      background: #e7f3ff;
+      border: 1px solid #b6d4fe;
+      color: #0c5460;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+    
+    .help-text {
+      font-size: 12px;
+      color: #666;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>AI Field Assistant Settings</h1>
+  
+  <div id="mockNotice" class="mock-notice" style="display: none;">
+    <strong>Mock Mode Active:</strong> No AI endpoint configured. The extension will use mock responses for testing.
+  </div>
+  
+  <div class="section">
+    <h2>AI Configuration</h2>
+    
+    <div class="form-group">
+      <label for="aiEndpoint">AI Endpoint URL:</label>
+      <input type="url" id="aiEndpoint" placeholder="https://your-ai-api.com/generate">
+      <div class="help-text">The URL of your AI service that will process requests and generate field content.</div>
+    </div>
+    
+    <div class="form-group">
+      <label for="apiKey">API Key:</label>
+      <input type="text" id="apiKey" placeholder="Your API key">
+      <div class="help-text">API key for authentication with your AI service (optional).</div>
+    </div>
+    
+    <div class="form-row">
+      <div class="form-group">
+        <label for="aiModel">AI Model:</label>
+        <input type="text" id="aiModel" placeholder="gpt-4, claude-3-sonnet, etc.">
+        <div class="help-text">Specify which AI model to use (optional).</div>
+      </div>
+      
+      <div class="form-group">
+        <label for="temperature">Temperature:</label>
+        <input type="number" id="temperature" min="0" max="2" step="0.1" placeholder="0.7">
+        <div class="help-text">Controls randomness (0.0 = deterministic, 2.0 = very creative).</div>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label>
+        <input type="checkbox" id="debugMode" style="width: auto; margin-right: 8px;">
+        Enable Debug Mode
+      </label>
+      <div class="help-text">Show detailed logging in browser console for troubleshooting.</div>
+    </div>
+    
+    <div class="form-row">
+      <button id="saveSettings" class="button">Save Settings</button>
+      <button id="clearSettings" class="button secondary">Clear Settings</button>
+      <button id="testConnection" class="button" style="background: #2196F3;">Test Connection</button>
+    </div>
+    
+    <div id="saveStatus" class="status" style="display: none;"></div>
+    <div id="testStatus" class="status" style="display: none;"></div>
+  </div>
+  
+  <div class="section">
+    <h2>How It Works</h2>
+    <p>This extension activates when a webpage includes the response header:</p>
+    <code>X-AI-Assist: on</code>
+    
+    <p>Optional configuration can be provided via:</p>
+    <ul>
+      <li><strong>Response Header:</strong> <code>X-AI-Config: &lt;base64url-encoded-json&gt;</code></li>
+      <li><strong>Page Script:</strong> <code>&lt;script type="application/json" id="ai-config"&gt;{...}&lt;/script&gt;</code></li>
+    </ul>
+    
+    <p>The extension will collect context from elements marked with <code>data-ai-context</code> attributes and automatically fill form fields based on AI-generated content.</p>
+  </div>
+  
+  <script src="options.js"></script>
+</body>
+</html>

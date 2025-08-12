@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Form Filling Test Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    
+    .context-block {
+      background: #f9f9f9;
+      border: 2px dashed #ddd;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 5px;
+    }
+    
+    .form-section {
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    
+    input, textarea, select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    
+    textarea {
+      height: 100px;
+      resize: vertical;
+    }
+    
+    .header-info {
+      background: #e7f3ff;
+      border: 1px solid #b6d4fe;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    
+    .ai-config {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    
+    code {
+      background: #f4f4f4;
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+    
+    pre {
+      background: #f4f4f4;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <h1>AI Form Filling Test Page</h1>
+  
+  <div class="header-info">
+    <h3>Required Response Headers:</h3>
+    <p>To activate the AI assistant on this page, your server must include:</p>
+    <pre>X-AI-Assist: on</pre>
+    <p>Optional configuration header:</p>
+    <pre>X-AI-Config: eyJwcm9tcHQiOiJGaWxsIHRoZSBmb3JtIGJhc2VkIG9uIGN1c3RvbWVyIGluZm9ybWF0aW9uIiwidGFyZ2V0cyI6W3sibmFtZSI6ImN1c3RvbWVyTmFtZSIsInNlbGVjdG9yIjoiI2N1c3RvbWVyTmFtZSIsInR5cGUiOiJ0ZXh0In0seyJuYW1lIjoiZW1haWwiLCJzZWxlY3RvciI6IiNlbWFpbCIsInR5cGUiOiJ0ZXh0In0seyJuYW1lIjoicHJvZHVjdFR5cGUiLCJzZWxlY3RvciI6IiNwcm9kdWN0VHlwZSIsInR5cGUiOiJ0ZXh0In0seyJuYW1lIjoibWVzc2FnZSIsInNlbGVjdG9yIjoiI21lc3NhZ2UiLCJ0eXBlIjoidGV4dCJ9XX0</pre>
+  </div>
+  
+  <div class="ai-config">
+    <h3>Page-level AI Configuration:</h3>
+    <p>This configuration will be merged with any header configuration:</p>
+  </div>
+  
+  <script type="application/json" id="ai-config">
+  {
+    "prompt": "Based on the customer information provided, fill out this contact form with relevant details. Use professional language and be helpful.",
+    "targets": [
+      {
+        "name": "customerName",
+        "selector": "#customerName",
+        "type": "text"
+      },
+      {
+        "name": "email",
+        "selector": "#email",
+        "type": "text"
+      },
+      {
+        "name": "productType",
+        "selector": "#productType",
+        "type": "text"
+      },
+      {
+        "name": "message",
+        "selector": "#message",
+        "type": "text"
+      }
+    ]
+  }
+  </script>
+  
+  <h2>Context Information</h2>
+  <p>The following sections are marked with <code>data-ai-context</code> and will be sent to the AI:</p>
+  
+  <div class="context-block" data-ai-context="customer-profile">
+    <h3>Customer Profile</h3>
+    <p><strong>Name:</strong> John Smith</p>
+    <p><strong>Email:</strong> john.smith@example.com</p>
+    <p><strong>Company:</strong> Tech Solutions Inc.</p>
+    <p><strong>Position:</strong> CTO</p>
+    <p><strong>Industry:</strong> Software Development</p>
+  </div>
+  
+  <div class="context-block" data-ai-context="product-interest">
+    <h3>Product Interest</h3>
+    <p>The customer has shown interest in our <strong>Enterprise Cloud Solutions</strong> package. They are particularly interested in:</p>
+    <ul>
+      <li>Scalable infrastructure</li>
+      <li>24/7 support</li>
+      <li>Integration capabilities</li>
+      <li>Security compliance</li>
+    </ul>
+  </div>
+  
+  <div class="context-block" data-ai-context="previous-interaction">
+    <h3>Previous Interaction</h3>
+    <p>Customer contacted us via phone on March 15, 2024. They mentioned they need a solution that can handle their growing team of 50+ developers and want to migrate from their current on-premise setup to cloud-based infrastructure.</p>
+  </div>
+  
+  <h2>Contact Form</h2>
+  <div class="form-section">
+    <form>
+      <div class="form-group">
+        <label for="customerName">Customer Name:</label>
+        <input type="text" id="customerName" name="customerName">
+      </div>
+      
+      <div class="form-group">
+        <label for="email">Email Address:</label>
+        <input type="email" id="email" name="email">
+      </div>
+      
+      <div class="form-group">
+        <label for="productType">Product of Interest:</label>
+        <input type="text" id="productType" name="productType">
+      </div>
+      
+      <div class="form-group">
+        <label for="message">Message:</label>
+        <textarea id="message" name="message" placeholder="Enter your message here..."></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label for="priority">Priority Level:</label>
+        <select id="priority" name="priority">
+          <option value="">Select priority...</option>
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+          <option value="urgent">Urgent</option>
+        </select>
+      </div>
+    </form>
+  </div>
+  
+  <h3>Test Instructions:</h3>
+  <ol>
+    <li>Install the Chrome extension and configure it (or leave it in Mock mode)</li>
+    <li>Serve this page with the required response headers</li>
+    <li>Load the page - the extension should automatically detect the headers and fill the form</li>
+    <li>Look for green "AI ✓" indicators next to filled fields</li>
+  </ol>
+  
+  <h3>Mock Mode Test:</h3>
+  <p>If no AI endpoint is configured, the extension will use mock data. You should see fields filled with placeholder values like "Mock content for customerName".</p>
+</body>
+</html>
