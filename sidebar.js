@@ -2,13 +2,18 @@ class ConversationManager {
   constructor() {
     this.conversations = new Map();
     this.activeConversationId = null;
+    this.renderRetryCount = 0;
+    this.maxRenderRetries = 5;
     this.init();
   }
 
   async init() {
     await this.loadConversations();
     this.setupEventListeners();
-    this.updateUI();
+    // Delay UI update to ensure DOM is ready
+    setTimeout(() => {
+      this.updateUI();
+    }, 100);
   }
 
   async loadConversations() {
@@ -95,39 +100,46 @@ class ConversationManager {
 
   setupEventListeners() {
     // New chat button
-    document.getElementById('newChatBtn').addEventListener('click', () => {
-      this.createConversation();
-    });
+    const newChatBtn = document.getElementById('newChatBtn');
+    if (newChatBtn) {
+      newChatBtn.addEventListener('click', () => {
+        this.createConversation();
+      });
+    }
 
     // Settings button
-    document.getElementById('settingsBtn').addEventListener('click', () => {
-      chrome.tabs.create({ url: chrome.runtime.getURL('options.html') });
-    });
+    const settingsBtn = document.getElementById('settingsBtn');
+    if (settingsBtn) {
+      settingsBtn.addEventListener('click', () => {
+        chrome.tabs.create({ url: chrome.runtime.getURL('options.html') });
+      });
+    }
 
     // Send message
     const sendBtn = document.getElementById('sendBtn');
     const messageInput = document.getElementById('messageInput');
 
-    sendBtn.addEventListener('click', () => {
-      this.sendMessage();
-    });
-
-    messageInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
+    if (sendBtn) {
+      sendBtn.addEventListener('click', () => {
         this.sendMessage();
-      }
-    });
+      });
+    }
 
-    // Auto-resize textarea
-    messageInput.addEventListener('input', () => {
-      messageInput.style.height = 'auto';
-      messageInput.style.height = messageInput.scrollHeight + 'px';
-    });
+    if (messageInput) {
+      // Auto-resize textarea
+      messageInput.addEventListener('input', () => {
+        messageInput.style.height = 'auto';
+        messageInput.style.height = messageInput.scrollHeight + 'px';
+      });
+    }
   }
 
   async sendMessage() {
     const messageInput = document.getElementById('messageInput');
+    if (!messageInput) {
+      console.error('messageInput element not found');
+      return;
+    }
     const content = messageInput.value.trim();
     
     if (!content) return;
@@ -151,7 +163,14 @@ class ConversationManager {
 
     try {
       // Get current tab info and page context
-      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      let tab = null;
+      try {
+        const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+        tab = tabs[0] || null;
+      } catch (tabError) {
+        console.warn('Could not get current tab:', tabError);
+      }
+      
       const response = await this.processMessage(content, tab);
       
       // Add AI response
@@ -178,41 +197,40 @@ class ConversationManager {
     // Get page context
     const context = await this.getPageContext(tab);
     
-    // Get AI settings
-    const settings = await chrome.storage.local.get(['aiEndpoint', 'apiKey']);
-    
-    if (!settings.aiEndpoint) {
-      // Mock mode
-      return this.generateMockResponse(content, context);
-    }
+    // Use background script to handle AI request
+    const requestData = {
+      prompt: content,
+      context: context,
+      targets: context.targets || []
+    };
 
-    // Make API call to AI endpoint
-    const response = await fetch(settings.aiEndpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(settings.apiKey && { 'Authorization': `Bearer ${settings.apiKey}` })
-      },
-      body: JSON.stringify({
-        prompt: content,
-        context: context,
-        targets: context.targets || []
-      })
+    const aiResponse = await chrome.runtime.sendMessage({
+      type: 'AI_REQUEST',
+      data: requestData
     });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    if (aiResponse.success) {
+      return {
+        content: typeof aiResponse.data === 'string' ? aiResponse.data : 'AI response received',
+        jsonData: typeof aiResponse.data === 'object' ? aiResponse.data : null,
+        targets: context.targets
+      };
+    } else {
+      // Fallback to mock response on error
+      return this.generateMockResponse(content, context);
     }
-
-    const data = await response.json();
-    return {
-      content: typeof data === 'string' ? data : 'AI response received',
-      jsonData: typeof data === 'object' ? data : null,
-      targets: context.targets
-    };
   }
 
   async getPageContext(tab) {
+    if (!tab) {
+      return {
+        title: 'No active tab',
+        description: '',
+        contextBlocks: [],
+        targets: []
+      };
+    }
+
     try {
       const [result] = await chrome.scripting.executeScript({
         target: { tabId: tab.id },
@@ -250,7 +268,7 @@ class ConversationManager {
     } catch (error) {
       console.error('Failed to get page context:', error);
       return {
-        title: tab.title,
+        title: tab.title || 'Unknown page',
         description: '',
         contextBlocks: [],
         targets: []
@@ -289,6 +307,10 @@ class ConversationManager {
 
   renderConversationList() {
     const conversationList = document.getElementById('conversationList');
+    if (!conversationList) {
+      console.error('conversationList element not found');
+      return;
+    }
     conversationList.innerHTML = '';
 
     const sortedConversations = Array.from(this.conversations.values())
@@ -303,12 +325,25 @@ class ConversationManager {
       item.innerHTML = `
         <div class="conversation-title">${conversation.title}</div>
         <div class="conversation-time">${time}</div>
-        <button class="conversation-delete" onclick="event.stopPropagation(); conversationManager.deleteConversation('${conversation.id}')">×</button>
+        <button class="conversation-delete" data-conversation-id="${conversation.id}">×</button>
       `;
 
-      item.addEventListener('click', () => {
+      item.addEventListener('click', (e) => {
+        // Don't switch conversation if delete button was clicked
+        if (e.target.classList.contains('conversation-delete')) {
+          return;
+        }
         this.setActiveConversation(conversation.id);
       });
+
+      // Add delete button event listener
+      const deleteBtn = item.querySelector('.conversation-delete');
+      if (deleteBtn) {
+        deleteBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.deleteConversation(conversation.id);
+        });
+      }
 
       conversationList.appendChild(item);
     });
@@ -318,53 +353,135 @@ class ConversationManager {
     const chatArea = document.getElementById('chatArea');
     const emptyState = document.getElementById('emptyState');
     
+    // Check if elements exist
+    if (!chatArea || !emptyState) {
+      this.renderRetryCount++;
+      if (this.renderRetryCount <= this.maxRenderRetries) {
+        console.error(`DOM elements not found (retry ${this.renderRetryCount}/${this.maxRenderRetries}), retrying in 200ms...`);
+        console.log('Missing elements:', {
+          chatArea: !!chatArea,
+          emptyState: !!emptyState
+        });
+        setTimeout(() => {
+          this.renderActiveConversation();
+        }, 200);
+        return;
+      } else {
+        console.error('Failed to find DOM elements after maximum retries. Please refresh the sidebar.');
+        return;
+      }
+    }
+    
+    // Reset retry count on successful element finding
+    this.renderRetryCount = 0;
+    
     const activeConversation = this.getActiveConversation();
     
     if (!activeConversation || activeConversation.messages.length === 0) {
-      emptyState.style.display = 'block';
+      try {
+        // Clear messages but keep emptyState
+        const messages = chatArea.querySelectorAll('.message');
+        messages.forEach(msg => msg.remove());
+        emptyState.style.display = 'block';
+      } catch (error) {
+        console.error('Error showing empty state:', error);
+      }
       return;
     }
 
-    emptyState.style.display = 'none';
-    chatArea.innerHTML = '';
+    try {
+      emptyState.style.display = 'none';
+      
+      // Clear existing messages but keep emptyState
+      const messages = chatArea.querySelectorAll('.message');
+      messages.forEach(msg => msg.remove());
 
-    activeConversation.messages.forEach(message => {
-      const messageEl = this.createMessageElement(message);
-      chatArea.appendChild(messageEl);
-    });
+      activeConversation.messages.forEach(message => {
+        const messageEl = this.createMessageElement(message);
+        if (messageEl) {
+          chatArea.appendChild(messageEl);
+        }
+      });
 
-    // Scroll to bottom
-    chatArea.scrollTop = chatArea.scrollHeight;
+      // Scroll to bottom
+      chatArea.scrollTop = chatArea.scrollHeight;
+    } catch (error) {
+      console.error('Error rendering conversation:', error);
+    }
   }
 
   createMessageElement(message) {
-    const messageEl = document.createElement('div');
-    messageEl.className = `message ${message.sender}`;
+    try {
+      if (!message || !message.sender || !message.content) {
+        console.error('Invalid message object:', message);
+        return null;
+      }
 
-    const time = new Date(message.timestamp).toLocaleTimeString();
-    
-    let contentHtml = `<div class="message-content">${this.escapeHtml(message.content)}</div>`;
-    
-    if (message.jsonData) {
-      contentHtml += `<div class="json-response">${JSON.stringify(message.jsonData, null, 2)}</div>`;
-      contentHtml += `
-        <div class="response-actions">
-          <button class="btn" onclick="conversationManager.copyToClipboard('${this.escapeHtml(JSON.stringify(message.jsonData))}')">Copy JSON</button>
-          <button class="btn btn-primary" onclick="conversationManager.applyToPage('${message.timestamp}')">Apply to Page</button>
-          <button class="btn" onclick="conversationManager.previewChanges('${message.timestamp}')">Preview</button>
+      const messageEl = document.createElement('div');
+      messageEl.className = `message ${message.sender}`;
+
+      const time = new Date(message.timestamp || Date.now()).toLocaleTimeString();
+      
+      let contentHtml = `<div class="message-content">${this.escapeHtml(message.content)}</div>`;
+      
+      if (message.jsonData) {
+        try {
+          contentHtml += `<div class="json-response">${JSON.stringify(message.jsonData, null, 2)}</div>`;
+          contentHtml += `
+            <div class="response-actions">
+              <button class="btn copy-json-btn" data-json='${this.escapeHtml(JSON.stringify(message.jsonData))}'>Copy JSON</button>
+              <button class="btn btn-primary apply-to-page-btn" data-timestamp="${message.timestamp}">Apply to Page</button>
+              <button class="btn preview-changes-btn" data-timestamp="${message.timestamp}">Preview</button>
+            </div>
+          `;
+        } catch (jsonError) {
+          console.error('Error processing JSON data:', jsonError);
+          contentHtml += `<div class="error-message">Error displaying JSON data</div>`;
+        }
+      }
+
+      messageEl.innerHTML = `
+        <div class="message-header">
+          <span class="message-sender">${message.sender === 'user' ? 'You' : 'AI'}</span>
+          <span class="message-time">${time}</span>
         </div>
+        ${contentHtml}
       `;
+
+      // Add event listeners for action buttons
+      if (message.jsonData) {
+        try {
+          const copyBtn = messageEl.querySelector('.copy-json-btn');
+          const applyBtn = messageEl.querySelector('.apply-to-page-btn');
+          const previewBtn = messageEl.querySelector('.preview-changes-btn');
+
+          if (copyBtn) {
+            copyBtn.addEventListener('click', () => {
+              this.copyToClipboard(copyBtn.dataset.json);
+            });
+          }
+
+          if (applyBtn) {
+            applyBtn.addEventListener('click', () => {
+              this.applyToPage(applyBtn.dataset.timestamp);
+            });
+          }
+
+          if (previewBtn) {
+            previewBtn.addEventListener('click', () => {
+              this.previewChanges(previewBtn.dataset.timestamp);
+            });
+          }
+        } catch (eventError) {
+          console.error('Error adding event listeners:', eventError);
+        }
+      }
+
+      return messageEl;
+    } catch (error) {
+      console.error('Error creating message element:', error);
+      return null;
     }
-
-    messageEl.innerHTML = `
-      <div class="message-header">
-        <span class="message-sender">${message.sender === 'user' ? 'You' : 'AI'}</span>
-        <span class="message-time">${time}</span>
-      </div>
-      ${contentHtml}
-    `;
-
-    return messageEl;
   }
 
   async copyToClipboard(text) {
@@ -445,23 +562,47 @@ class ConversationManager {
 
   updateStatus(text, type = '') {
     const statusIndicator = document.getElementById('statusIndicator');
-    statusIndicator.textContent = text;
-    statusIndicator.className = `status-indicator ${type}`;
+    if (statusIndicator) {
+      statusIndicator.textContent = text;
+      statusIndicator.className = `status-indicator ${type}`;
+    }
   }
 
   escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+    try {
+      if (text === null || text === undefined) {
+        return '';
+      }
+      const div = document.createElement('div');
+      div.textContent = String(text);
+      return div.innerHTML;
+    } catch (error) {
+      console.error('Error escaping HTML:', error);
+      return String(text || '');
+    }
   }
 }
 
 // Initialize the conversation manager
 let conversationManager;
 
-document.addEventListener('DOMContentLoaded', () => {
+function initializeApp() {
   conversationManager = new ConversationManager();
-});
+  // Make conversationManager globally available for onclick handlers
+  window.conversationManager = conversationManager;
+}
 
-// Make conversationManager globally available for onclick handlers
-window.conversationManager = conversationManager;
+// Try multiple initialization methods
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeApp);
+} else {
+  // DOM is already loaded
+  initializeApp();
+}
+
+// Also try with window.onload as fallback
+window.addEventListener('load', () => {
+  if (!conversationManager) {
+    initializeApp();
+  }
+});

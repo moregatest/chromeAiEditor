@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechStore - Premium Laptops</title>
+  <meta name="description" content="Buy premium laptops with latest technology and best warranty">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    
+    .product-showcase {
+      background: #f8f9fa;
+      border: 2px solid #007bff;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+    }
+    
+    .customer-info {
+      background: #e8f5e9;
+      border: 2px dashed #4caf50;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 5px;
+    }
+    
+    .form-section {
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #333;
+    }
+    
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+    
+    textarea {
+      height: 100px;
+      resize: vertical;
+    }
+    
+    .product-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    
+    .product-card {
+      border: 1px solid #eee;
+      padding: 15px;
+      border-radius: 8px;
+      background: white;
+    }
+    
+    .price {
+      color: #007bff;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    
+    .header-info {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header-info">
+    <h2>🛒 E-commerce Test Page - TechStore</h2>
+    <p><strong>URL:</strong> /ecommerce.html</p>
+    <p>This page simulates an e-commerce product page with customer browsing context.</p>
+  </div>
+
+  <script type="application/json" id="ai-config">
+  {
+    "prompt": "Based on the customer's browsing behavior and product interest, help fill out the inquiry form for a laptop purchase. Use professional sales language and be helpful.",
+    "targets": [
+      {
+        "name": "customerName",
+        "selector": "#customerName",
+        "type": "text"
+      },
+      {
+        "name": "email",
+        "selector": "#email",
+        "type": "text"
+      },
+      {
+        "name": "phone",
+        "selector": "#phone",
+        "type": "text"
+      },
+      {
+        "name": "interestedProduct",
+        "selector": "#interestedProduct",
+        "type": "select"
+      },
+      {
+        "name": "budget",
+        "selector": "#budget",
+        "type": "select"
+      },
+      {
+        "name": "inquiryMessage",
+        "selector": "#inquiryMessage",
+        "type": "text"
+      }
+    ]
+  }
+  </script>
+
+  <h1>🖥️ TechStore - Premium Laptops</h1>
+  
+  <div class="product-showcase" data-ai-context="featured-product">
+    <h2>✨ Today's Featured Product</h2>
+    <h3>MacBook Pro 16-inch M3 Pro</h3>
+    <p><span class="price">$2,499</span></p>
+    <p>Perfect for professionals and creators. Features the powerful M3 Pro chip, 18GB unified memory, and stunning Liquid Retina XDR display.</p>
+    <ul>
+      <li>M3 Pro chip with 12-core CPU and 18-core GPU</li>
+      <li>18GB unified memory, 512GB SSD storage</li>
+      <li>16.2-inch Liquid Retina XDR display</li>
+      <li>Three Thunderbolt 4 ports, HDMI port, SDXC card slot</li>
+      <li>22-hour battery life</li>
+    </ul>
+  </div>
+
+  <div class="customer-info" data-ai-context="customer-behavior">
+    <h3>👤 Customer Browsing Activity</h3>
+    <p><strong>Current Session:</strong> Sarah Chen has been browsing for 15 minutes</p>
+    <p><strong>Previous Visits:</strong> Viewed gaming laptops, professional workstations</p>
+    <p><strong>Items in Cart:</strong> MacBook Pro 16-inch M3 Pro, Apple Magic Mouse</p>
+    <p><strong>Price Range:</strong> $2,000 - $3,500</p>
+    <p><strong>Interest Level:</strong> High - spent significant time on product specifications</p>
+    <p><strong>Location:</strong> San Francisco, CA - Corporate buyer (Tech Company)</p>
+  </div>
+
+  <div class="product-grid">
+    <div class="product-card" data-ai-context="alternative-products">
+      <h4>Dell XPS 15</h4>
+      <p class="price">$1,899</p>
+      <p>High-performance Windows laptop with NVIDIA RTX graphics</p>
+    </div>
+    <div class="product-card" data-ai-context="alternative-products">
+      <h4>ThinkPad X1 Carbon</h4>
+      <p class="price">$1,649</p>
+      <p>Ultra-lightweight business laptop with excellent keyboard</p>
+    </div>
+  </div>
+
+  <div class="customer-info" data-ai-context="purchase-intent">
+    <h3>🎯 Purchase Intent Signals</h3>
+    <p><strong>Urgency:</strong> Looking to purchase within 1 week</p>
+    <p><strong>Use Case:</strong> Video editing, software development, presentations</p>
+    <p><strong>Decision Factors:</strong> Performance, reliability, warranty support</p>
+    <p><strong>Budget Approved:</strong> Company purchase order ready</p>
+  </div>
+
+  <h2>📝 Product Inquiry Form</h2>
+  <div class="form-section">
+    <form>
+      <div class="form-group">
+        <label for="customerName">Full Name:</label>
+        <input type="text" id="customerName" name="customerName" placeholder="Enter your full name">
+      </div>
+      
+      <div class="form-group">
+        <label for="email">Email Address:</label>
+        <input type="email" id="email" name="email" placeholder="your.email@company.com">
+      </div>
+      
+      <div class="form-group">
+        <label for="phone">Phone Number:</label>
+        <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567">
+      </div>
+      
+      <div class="form-group">
+        <label for="interestedProduct">Product Interest:</label>
+        <select id="interestedProduct" name="interestedProduct">
+          <option value="">Select a product...</option>
+          <option value="macbook-pro-16">MacBook Pro 16-inch M3 Pro</option>
+          <option value="dell-xps-15">Dell XPS 15</option>
+          <option value="thinkpad-x1">ThinkPad X1 Carbon</option>
+          <option value="custom-build">Custom Configuration</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="budget">Budget Range:</label>
+        <select id="budget" name="budget">
+          <option value="">Select budget range...</option>
+          <option value="1000-1500">$1,000 - $1,500</option>
+          <option value="1500-2000">$1,500 - $2,000</option>
+          <option value="2000-2500">$2,000 - $2,500</option>
+          <option value="2500-3000">$2,500 - $3,000</option>
+          <option value="3000-plus">$3,000+</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="inquiryMessage">Your Message:</label>
+        <textarea id="inquiryMessage" name="inquiryMessage" placeholder="Tell us about your requirements, timeline, and any specific questions..."></textarea>
+      </div>
+    </form>
+  </div>
+
+  <h3>🧪 Test Instructions:</h3>
+  <ol>
+    <li>Open the AI Assistant sidebar</li>
+    <li>Try asking questions about the products or customer context</li>
+    <li>Test form filling based on the customer's browsing behavior</li>
+    <li>Navigate to other test pages and verify conversations remain separate</li>
+  </ol>
+</body>
+</html>

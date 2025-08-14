@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevBlog - The Future of AI Development</title>
+  <meta name="description" content="Exploring the latest trends in AI development and their impact on software engineering">
+  <style>
+    body {
+      font-family: 'Georgia', serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.7;
+      color: #333;
+    }
+    
+    .article-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .article-meta {
+      background: #f8f9fa;
+      border-left: 4px solid #007bff;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 0 5px 5px 0;
+    }
+    
+    .author-info {
+      background: #e3f2fd;
+      border: 2px dashed #2196f3;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+    }
+    
+    .reader-context {
+      background: #f3e5f5;
+      border: 2px solid #9c27b0;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 5px;
+    }
+    
+    .form-section {
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 25px;
+      margin: 30px 0;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .form-group {
+      margin-bottom: 18px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      color: #444;
+    }
+    
+    input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+    
+    input:focus, textarea:focus, select:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+    
+    textarea {
+      height: 120px;
+      resize: vertical;
+    }
+    
+    .article-content {
+      font-size: 16px;
+      line-height: 1.8;
+      margin: 30px 0;
+    }
+    
+    .code-snippet {
+      background: #2d3748;
+      color: #e2e8f0;
+      padding: 15px;
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+      margin: 15px 0;
+    }
+    
+    .header-info {
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header-info">
+    <h2>📝 Blog Test Page - DevBlog</h2>
+    <p><strong>URL:</strong> /blog.html</p>
+    <p>This page simulates a technical blog post with reader engagement context.</p>
+  </div>
+
+  <script type="application/json" id="ai-config">
+  {
+    "prompt": "Based on the blog article content and reader context, help fill out a thoughtful comment form. Write in the style of a tech professional who has read and understood the article.",
+    "targets": [
+      {
+        "name": "commenterName",
+        "selector": "#commenterName",
+        "type": "text"
+      },
+      {
+        "name": "email",
+        "selector": "#email",
+        "type": "text"
+      },
+      {
+        "name": "website",
+        "selector": "#website",
+        "type": "text"
+      },
+      {
+        "name": "profession",
+        "selector": "#profession",
+        "type": "select"
+      },
+      {
+        "name": "commentType",
+        "selector": "#commentType",
+        "type": "select"
+      },
+      {
+        "name": "commentContent",
+        "selector": "#commentContent",
+        "type": "text"
+      }
+    ]
+  }
+  </script>
+
+  <div class="article-header">
+    <h1>🤖 The Future of AI Development: From Code to Consciousness</h1>
+    <p>Exploring how artificial intelligence is revolutionizing software development and what it means for developers</p>
+  </div>
+  
+  <div class="article-meta" data-ai-context="article-info">
+    <p><strong>Published:</strong> March 15, 2024 | <strong>Reading Time:</strong> 8 minutes | <strong>Category:</strong> AI & Technology</p>
+    <p><strong>Tags:</strong> Artificial Intelligence, Machine Learning, Software Development, Future Tech</p>
+    <p><strong>Views:</strong> 15,247 | <strong>Comments:</strong> 89 | <strong>Shares:</strong> 341</p>
+  </div>
+
+  <div class="author-info" data-ai-context="author-profile">
+    <h3>👨‍💻 About the Author: Dr. Alex Chen</h3>
+    <p><strong>Position:</strong> Senior AI Research Engineer at TechCorp</p>
+    <p><strong>Experience:</strong> 12 years in machine learning and software architecture</p>
+    <p><strong>Expertise:</strong> Deep learning, natural language processing, distributed systems</p>
+    <p><strong>Previous Work:</strong> Led AI initiatives at Google, published 25+ research papers</p>
+    <p><strong>Speaking:</strong> Regular speaker at AI conferences, tech meetups</p>
+  </div>
+
+  <div class="article-content" data-ai-context="article-content">
+    <h2>The AI Revolution in Development</h2>
+    <p>The landscape of software development is experiencing a seismic shift. Artificial Intelligence is no longer just a buzzword or a distant future concept—it's actively transforming how we write, debug, and deploy code today.</p>
+
+    <p>From GitHub Copilot suggesting intelligent code completions to GPT models helping with documentation, AI tools are becoming indispensable companions for developers worldwide. But this is just the beginning.</p>
+
+    <h3>Key Developments Shaping the Future</h3>
+    <p><strong>1. Automated Code Generation:</strong> AI can now write entire functions, classes, and even small applications based on natural language descriptions.</p>
+    
+    <p><strong>2. Intelligent Debugging:</strong> Machine learning models can identify bugs, suggest fixes, and even predict potential issues before they occur.</p>
+
+    <p><strong>3. Personalized Development Environments:</strong> AI is learning individual coding patterns and preferences to provide tailored assistance.</p>
+
+    <div class="code-snippet">
+// Example: AI-generated function
+function optimizeDatabase(query, parameters) {
+  // AI suggests performance optimizations
+  const optimizedQuery = analyzeAndOptimize(query);
+  return executeWithCaching(optimizedQuery, parameters);
+}
+    </div>
+
+    <h3>The Human-AI Collaboration Model</h3>
+    <p>Rather than replacing developers, AI is augmenting human creativity and problem-solving capabilities. The most successful development teams are those that have learned to effectively collaborate with AI tools.</p>
+  </div>
+
+  <div class="reader-context" data-ai-context="reader-engagement">
+    <h3>📊 Reader Engagement Data</h3>
+    <p><strong>Current Reader:</strong> Software engineer from Seattle</p>
+    <p><strong>Time on Page:</strong> 6 minutes 32 seconds</p>
+    <p><strong>Scroll Depth:</strong> 85% - actively reading</p>
+    <p><strong>Previous Articles Read:</strong> "Machine Learning for Web Development", "API Design Best Practices"</p>
+    <p><strong>Interaction Level:</strong> High - spent time on code examples</p>
+    <p><strong>Likely Intent:</strong> Learning about AI tools for development workflow</p>
+  </div>
+
+  <div class="reader-context" data-ai-context="community-discussion">
+    <h3>💬 Community Discussion Highlights</h3>
+    <p><strong>Top Comment Thread:</strong> Debate about AI replacing junior developers (47 replies)</p>
+    <p><strong>Popular Opinion:</strong> AI tools are powerful but require human oversight</p>
+    <p><strong>Common Questions:</strong> "Which AI tools should I start with?", "How to integrate AI in team workflow?"</p>
+    <p><strong>Expert Responses:</strong> Several industry veterans shared practical implementation experiences</p>
+  </div>
+
+  <h2>💭 Join the Discussion</h2>
+  <div class="form-section">
+    <p>Share your thoughts on AI in software development. What tools are you using? What challenges have you faced?</p>
+    <form>
+      <div class="form-group">
+        <label for="commenterName">Your Name:</label>
+        <input type="text" id="commenterName" name="commenterName" placeholder="Enter your name">
+      </div>
+      
+      <div class="form-group">
+        <label for="email">Email Address:</label>
+        <input type="email" id="email" name="email" placeholder="your.email@example.com">
+      </div>
+      
+      <div class="form-group">
+        <label for="website">Website/Portfolio (Optional):</label>
+        <input type="url" id="website" name="website" placeholder="https://yourwebsite.com">
+      </div>
+      
+      <div class="form-group">
+        <label for="profession">Your Role:</label>
+        <select id="profession" name="profession">
+          <option value="">Select your role...</option>
+          <option value="frontend-developer">Frontend Developer</option>
+          <option value="backend-developer">Backend Developer</option>
+          <option value="fullstack-developer">Full Stack Developer</option>
+          <option value="ai-engineer">AI/ML Engineer</option>
+          <option value="devops-engineer">DevOps Engineer</option>
+          <option value="tech-lead">Tech Lead</option>
+          <option value="student">Student</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="commentType">Comment Type:</label>
+        <select id="commentType" name="commentType">
+          <option value="">Select comment type...</option>
+          <option value="experience-sharing">Sharing Personal Experience</option>
+          <option value="question">Asking a Question</option>
+          <option value="tool-recommendation">Tool Recommendation</option>
+          <option value="constructive-criticism">Constructive Feedback</option>
+          <option value="additional-insights">Additional Insights</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="commentContent">Your Comment:</label>
+        <textarea id="commentContent" name="commentContent" placeholder="Share your thoughts, experiences, or questions about AI in software development..."></textarea>
+      </div>
+    </form>
+  </div>
+
+  <h3>🧪 Test Instructions:</h3>
+  <ol>
+    <li>Open the AI Assistant sidebar on this page</li>
+    <li>Ask questions about the blog post or AI development</li>
+    <li>Test comment form filling based on the article context</li>
+    <li>Switch to the e-commerce page and verify separate conversations</li>
+  </ol>
+</body>
+</html>

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CloudScale Solutions - Enterprise Cloud Consulting</title>
+  <meta name="description" content="Transform your business with enterprise cloud solutions and digital transformation consulting">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+      color: #2c3e50;
+    }
+    
+    .hero-section {
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      color: white;
+      padding: 40px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+    
+    .service-card {
+      background: #f8f9fc;
+      border: 1px solid #e2e6ea;
+      padding: 25px;
+      border-radius: 8px;
+      border-left: 4px solid #007bff;
+    }
+    
+    .client-showcase {
+      background: #e8f5e9;
+      border: 2px solid #28a745;
+      padding: 25px;
+      margin: 25px 0;
+      border-radius: 10px;
+    }
+    
+    .visitor-context {
+      background: #fff3cd;
+      border: 2px dashed #ffc107;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+    }
+    
+    .form-section {
+      background: #ffffff;
+      border: 1px solid #dee2e6;
+      padding: 30px;
+      margin: 30px 0;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #495057;
+    }
+    
+    input, textarea, select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #ced4da;
+      border-radius: 8px;
+      box-sizing: border-box;
+      font-size: 15px;
+      transition: all 0.3s ease;
+    }
+    
+    input:focus, textarea:focus, select:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+      outline: none;
+    }
+    
+    textarea {
+      height: 120px;
+      resize: vertical;
+    }
+    
+    .stats-section {
+      background: #17a2b8;
+      color: white;
+      padding: 25px;
+      border-radius: 8px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    
+    .header-info {
+      background: #f0f8ff;
+      border: 1px solid #b8daff;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header-info">
+    <h2>🏢 Corporate Test Page - CloudScale Solutions</h2>
+    <p><strong>URL:</strong> /corporate.html</p>
+    <p>This page simulates a corporate consulting website with business context and lead generation.</p>
+  </div>
+
+  <script type="application/json" id="ai-config">
+  {
+    "prompt": "Based on the company's services and the visitor's business context, help fill out a professional consultation request form. Write in a business-appropriate tone and show understanding of enterprise needs.",
+    "targets": [
+      {
+        "name": "contactName",
+        "selector": "#contactName",
+        "type": "text"
+      },
+      {
+        "name": "companyName",
+        "selector": "#companyName",
+        "type": "text"
+      },
+      {
+        "name": "email",
+        "selector": "#email",
+        "type": "text"
+      },
+      {
+        "name": "phone",
+        "selector": "#phone",
+        "type": "text"
+      },
+      {
+        "name": "jobTitle",
+        "selector": "#jobTitle",
+        "type": "text"
+      },
+      {
+        "name": "companySize",
+        "selector": "#companySize",
+        "type": "select"
+      },
+      {
+        "name": "serviceInterest",
+        "selector": "#serviceInterest",
+        "type": "select"
+      },
+      {
+        "name": "projectBudget",
+        "selector": "#projectBudget",
+        "type": "select"
+      },
+      {
+        "name": "timeline",
+        "selector": "#timeline",
+        "type": "select"
+      },
+      {
+        "name": "projectDescription",
+        "selector": "#projectDescription",
+        "type": "text"
+      }
+    ]
+  }
+  </script>
+
+  <div class="hero-section">
+    <h1>☁️ CloudScale Solutions</h1>
+    <h2>Enterprise Cloud Transformation Experts</h2>
+    <p>Accelerate your digital transformation with our proven cloud migration and modernization strategies</p>
+  </div>
+
+  <div class="stats-section" data-ai-context="company-credentials">
+    <h2>🎯 Trusted by Industry Leaders</h2>
+    <div class="stats-grid">
+      <div>
+        <h3>500+</h3>
+        <p>Enterprise Clients</p>
+      </div>
+      <div>
+        <h3>$2B+</h3>
+        <p>Cloud Savings Generated</p>
+      </div>
+      <div>
+        <h3>99.9%</h3>
+        <p>Migration Success Rate</p>
+      </div>
+      <div>
+        <h3>15</h3>
+        <p>Years Experience</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="services-grid" data-ai-context="service-offerings">
+    <div class="service-card">
+      <h3>🔄 Cloud Migration</h3>
+      <p><strong>Complete end-to-end migration services</strong></p>
+      <p>Seamlessly move your applications, data, and infrastructure to AWS, Azure, or Google Cloud with minimal downtime.</p>
+      <ul>
+        <li>Assessment & Planning</li>
+        <li>Architecture Design</li>
+        <li>Migration Execution</li>
+        <li>Post-migration Optimization</li>
+      </ul>
+    </div>
+    
+    <div class="service-card">
+      <h3>🛡️ Cloud Security</h3>
+      <p><strong>Enterprise-grade security implementation</strong></p>
+      <p>Protect your cloud infrastructure with comprehensive security strategies and compliance frameworks.</p>
+      <ul>
+        <li>Security Audits</li>
+        <li>Compliance (SOC2, GDPR, HIPAA)</li>
+        <li>Identity & Access Management</li>
+        <li>Threat Detection & Response</li>
+      </ul>
+    </div>
+    
+    <div class="service-card">
+      <h3>📊 Data Analytics</h3>
+      <p><strong>Transform data into business insights</strong></p>
+      <p>Build scalable data pipelines and analytics platforms that drive decision-making across your organization.</p>
+      <ul>
+        <li>Data Lake Architecture</li>
+        <li>Real-time Analytics</li>
+        <li>Machine Learning Integration</li>
+        <li>Business Intelligence Dashboards</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="client-showcase" data-ai-context="case-studies">
+    <h2>🏆 Recent Success Stories</h2>
+    
+    <div style="margin: 20px 0; padding: 15px; border-left: 4px solid #28a745;">
+      <h4>Global Manufacturing - Fortune 500</h4>
+      <p><strong>Challenge:</strong> Legacy ERP system modernization</p>
+      <p><strong>Solution:</strong> Hybrid cloud architecture with microservices</p>
+      <p><strong>Results:</strong> 40% cost reduction, 3x faster deployment cycles</p>
+    </div>
+    
+    <div style="margin: 20px 0; padding: 15px; border-left: 4px solid #17a2b8;">
+      <h4>Healthcare Network - 15 Locations</h4>
+      <p><strong>Challenge:</strong> HIPAA-compliant cloud migration</p>
+      <p><strong>Solution:</strong> Secure multi-region AWS deployment</p>
+      <p><strong>Results:</strong> 99.99% uptime, reduced IT costs by $2M annually</p>
+    </div>
+    
+    <div style="margin: 20px 0; padding: 15px; border-left: 4px solid #ffc107;">
+      <h4>Financial Services Startup</h4>
+      <p><strong>Challenge:</strong> Scalable fintech platform</p>
+      <p><strong>Solution:</strong> Serverless architecture on Google Cloud</p>
+      <p><strong>Results:</strong> Scaled from 1K to 1M users without infrastructure changes</p>
+    </div>
+  </div>
+
+  <div class="visitor-context" data-ai-context="visitor-profile">
+    <h3>👔 Current Visitor Profile</h3>
+    <p><strong>Company:</strong> TechCorp Industries - Mid-size SaaS Company</p>
+    <p><strong>Visitor Role:</strong> CTO looking for cloud migration partner</p>
+    <p><strong>Current Infrastructure:</strong> On-premise data centers with aging hardware</p>
+    <p><strong>Pain Points:</strong> High maintenance costs, limited scalability, security concerns</p>
+    <p><strong>Timeline:</strong> Planning migration for next quarter</p>
+    <p><strong>Budget Range:</strong> $500K - $1M for migration project</p>
+    <p><strong>Previous Research:</strong> Evaluated AWS, Azure, attended cloud conferences</p>
+    <p><strong>Decision Factors:</strong> Proven track record, minimal downtime, ongoing support</p>
+  </div>
+
+  <div class="visitor-context" data-ai-context="engagement-signals">
+    <h3>📈 Engagement Indicators</h3>
+    <p><strong>Time on Site:</strong> 12 minutes - high interest level</p>
+    <p><strong>Pages Viewed:</strong> Services, Case Studies, Pricing (indirect inquiry)</p>
+    <p><strong>Downloads:</strong> "Cloud Migration Checklist" PDF</p>
+    <p><strong>Intent Score:</strong> 85/100 - Very likely to convert</p>
+    <p><strong>Source:</strong> LinkedIn sponsored content about cloud migration</p>
+    <p><strong>Geographic Location:</strong> Austin, TX - Tech hub with cloud expertise available</p>
+  </div>
+
+  <h2>📞 Schedule Your Free Consultation</h2>
+  <div class="form-section">
+    <p>Ready to transform your business with cloud technology? Our experts are here to help you develop a customized strategy that aligns with your goals and budget.</p>
+    
+    <form>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div class="form-group">
+          <label for="contactName">Full Name:</label>
+          <input type="text" id="contactName" name="contactName" placeholder="Enter your full name">
+        </div>
+        
+        <div class="form-group">
+          <label for="jobTitle">Job Title:</label>
+          <input type="text" id="jobTitle" name="jobTitle" placeholder="e.g., CTO, IT Director">
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="companyName">Company Name:</label>
+        <input type="text" id="companyName" name="companyName" placeholder="Your company name">
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div class="form-group">
+          <label for="email">Business Email:</label>
+          <input type="email" id="email" name="email" placeholder="your.email@company.com">
+        </div>
+        
+        <div class="form-group">
+          <label for="phone">Phone Number:</label>
+          <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567">
+        </div>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div class="form-group">
+          <label for="companySize">Company Size:</label>
+          <select id="companySize" name="companySize">
+            <option value="">Select company size...</option>
+            <option value="startup">Startup (1-10 employees)</option>
+            <option value="small">Small Business (11-50 employees)</option>
+            <option value="medium">Medium Business (51-250 employees)</option>
+            <option value="large">Large Enterprise (250+ employees)</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="serviceInterest">Primary Interest:</label>
+          <select id="serviceInterest" name="serviceInterest">
+            <option value="">Select primary service...</option>
+            <option value="cloud-migration">Cloud Migration</option>
+            <option value="cloud-security">Cloud Security</option>
+            <option value="data-analytics">Data Analytics</option>
+            <option value="modernization">Application Modernization</option>
+            <option value="consulting">Strategic Consulting</option>
+          </select>
+        </div>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div class="form-group">
+          <label for="projectBudget">Project Budget Range:</label>
+          <select id="projectBudget" name="projectBudget">
+            <option value="">Select budget range...</option>
+            <option value="under-100k">Under $100K</option>
+            <option value="100k-500k">$100K - $500K</option>
+            <option value="500k-1m">$500K - $1M</option>
+            <option value="1m-5m">$1M - $5M</option>
+            <option value="over-5m">Over $5M</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="timeline">Project Timeline:</label>
+          <select id="timeline" name="timeline">
+            <option value="">Select timeline...</option>
+            <option value="immediate">ASAP (Within 1 month)</option>
+            <option value="quarter">This Quarter</option>
+            <option value="6-months">Next 6 months</option>
+            <option value="year">Within a year</option>
+            <option value="planning">Still planning</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="projectDescription">Project Description:</label>
+        <textarea id="projectDescription" name="projectDescription" placeholder="Tell us about your current infrastructure, challenges, and goals. What specific outcomes are you hoping to achieve?"></textarea>
+      </div>
+    </form>
+  </div>
+
+  <h3>🧪 Test Instructions:</h3>
+  <ol>
+    <li>Open the AI Assistant sidebar on this corporate page</li>
+    <li>Ask about cloud services or business transformation</li>
+    <li>Test consultation form filling based on business context</li>
+    <li>Navigate between all three test pages to verify conversation isolation</li>
+  </ol>
+</body>
+</html>
