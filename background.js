@@ -91,7 +91,7 @@ async function handleAiRequest(requestData) {
   
   if (!settings.aiEndpoint) {
     await debugLog('AI_API', 'No endpoint configured, using mock response');
-    return generateMockResponse(requestData.targets);
+    return await generateMockResponse(requestData.targets);
   }
   
   try {
@@ -167,44 +167,117 @@ async function handleAiRequest(requestData) {
     let aiData = {};
     if (result.choices && result.choices[0] && result.choices[0].message && result.choices[0].message.content) {
       try {
-        // Try to parse the content as JSON
         const content = result.choices[0].message.content.trim();
         await debugLog('AI_API', 'Extracting content from AI response', content);
         
-        // Look for JSON in the response (it might be wrapped in markdown code blocks)
-        let jsonContent = content;
-        const jsonMatch = content.match(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/);
-        if (jsonMatch) {
-          jsonContent = jsonMatch[1];
-        } else if (content.includes('{') && content.includes('}')) {
-          // Extract JSON object from the response
-          const startIndex = content.indexOf('{');
-          const endIndex = content.lastIndexOf('}') + 1;
-          jsonContent = content.substring(startIndex, endIndex);
-        }
-        
-        aiData = JSON.parse(jsonContent);
+        // Try multiple methods to extract valid JSON
+        aiData = await extractJsonFromContent(content, requestData.targets);
         await debugLog('AI_API', 'Successfully parsed AI response content as JSON', aiData);
       } catch (parseError) {
         await debugError('AI_API', 'Failed to parse AI response content as JSON, using fallback', parseError);
-        // Fallback: create response based on targets
-        if (requestData.targets) {
-          requestData.targets.forEach(target => {
-            aiData[target.name] = result.choices[0].message.content;
-          });
-        }
+        // Enhanced fallback: create response based on targets
+        aiData = await createFallbackResponse(result.choices[0].message.content, requestData.targets);
       }
     } else {
       // Fallback for unexpected response format
-      await debugLog('AI_API', 'Unexpected AI response format, using fallback');
-      aiData = result;
+      await debugLog('AI_API', 'Unexpected AI response format, using mock fallback');
+      aiData = await generateMockResponse(requestData.targets);
     }
     
     return aiData;
   } catch (error) {
     await debugError('AI_API', 'AI API request failed, falling back to mock', error);
-    return generateMockResponse(requestData.targets);
+    return await generateMockResponse(requestData.targets);
   }
+}
+
+async function extractJsonFromContent(content, targets) {
+  // Method 1: Try to find JSON in markdown code blocks
+  const codeBlockMatch = content.match(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/);
+  if (codeBlockMatch) {
+    try {
+      const parsed = JSON.parse(codeBlockMatch[1]);
+      await debugLog('AI_API', 'JSON extracted from code block');
+      return parsed;
+    } catch (e) {
+      await debugLog('AI_API', 'Code block JSON invalid, trying other methods');
+    }
+  }
+  
+  // Method 2: Try to find the first complete JSON object
+  let braceCount = 0;
+  let jsonStart = -1;
+  let jsonEnd = -1;
+  
+  for (let i = 0; i < content.length; i++) {
+    if (content[i] === '{') {
+      if (jsonStart === -1) jsonStart = i;
+      braceCount++;
+    } else if (content[i] === '}') {
+      braceCount--;
+      if (braceCount === 0 && jsonStart !== -1) {
+        jsonEnd = i;
+        break;
+      }
+    }
+  }
+  
+  if (jsonStart !== -1 && jsonEnd !== -1) {
+    try {
+      const jsonStr = content.substring(jsonStart, jsonEnd + 1);
+      const parsed = JSON.parse(jsonStr);
+      await debugLog('AI_API', 'JSON extracted using brace counting');
+      return parsed;
+    } catch (e) {
+      await debugLog('AI_API', 'Brace counting JSON invalid, trying fallback');
+    }
+  }
+  
+  // Method 3: Try to parse the entire content as JSON
+  try {
+    const parsed = JSON.parse(content);
+    await debugLog('AI_API', 'Entire content parsed as JSON');
+    return parsed;
+  } catch (e) {
+    await debugLog('AI_API', 'Content is not valid JSON');
+  }
+  
+  // If all methods fail, throw error to trigger fallback
+  throw new Error('No valid JSON found in content');
+}
+
+async function createFallbackResponse(content, targets) {
+  await debugLog('AI_API', 'Creating fallback response from content', { 
+    contentLength: content?.length,
+    targetsCount: targets?.length 
+  });
+  
+  const fallbackData = {};
+  
+  if (targets && targets.length > 0) {
+    // Create meaningful fallback based on targets
+    targets.forEach(target => {
+      if (target.type === 'json') {
+        fallbackData[target.name] = { 
+          error: true, 
+          message: 'Unable to parse AI response',
+          fallback: true 
+        };
+      } else {
+        // Try to extract meaningful text or use default
+        const cleanContent = content ? content.replace(/[{}]/g, '').trim() : '';
+        fallbackData[target.name] = cleanContent.length > 0 && cleanContent.length < 200 
+          ? cleanContent 
+          : `Unable to process response for ${target.name}`;
+      }
+    });
+  } else {
+    // No targets defined, return generic response
+    fallbackData.message = 'AI response received but could not be processed';
+  }
+  
+  await debugLog('AI_API', 'Fallback response created', fallbackData);
+  return fallbackData;
 }
 
 async function generateMockResponse(targets) {
@@ -212,13 +285,17 @@ async function generateMockResponse(targets) {
   
   const mockData = {};
   
-  targets.forEach(target => {
-    if (target.type === 'json') {
-      mockData[target.name] = { mock: true, value: `Mock data for ${target.name}` };
-    } else {
-      mockData[target.name] = `Mock content for ${target.name}`;
-    }
-  });
+  if (targets && targets.length > 0) {
+    targets.forEach(target => {
+      if (target.type === 'json') {
+        mockData[target.name] = { mock: true, value: `Mock data for ${target.name}` };
+      } else {
+        mockData[target.name] = `Mock content for ${target.name}`;
+      }
+    });
+  } else {
+    mockData.message = 'Mock response - no targets defined';
+  }
   
   await debugLog('MOCK_RESPONSE', 'Mock response generated', mockData);
   

@@ -1,7 +1,8 @@
 class ConversationManager {
   constructor() {
-    this.conversations = new Map();
-    this.activeConversationId = null;
+    this.conversationsByPage = new Map(); // Map<pageKey, Map<conversationId, conversation>>
+    this.activeConversationByPage = new Map(); // Map<pageKey, conversationId>
+    this.currentPageKey = null;
     this.renderRetryCount = 0;
     this.maxRenderRetries = 5;
     this.init();
@@ -9,7 +10,10 @@ class ConversationManager {
 
   async init() {
     await this.loadConversations();
+    await this.updateCurrentPage();
     this.setupEventListeners();
+    // Monitor tab changes
+    this.setupTabChangeListener();
     // Delay UI update to ensure DOM is ready
     setTimeout(() => {
       this.updateUI();
@@ -18,11 +22,17 @@ class ConversationManager {
 
   async loadConversations() {
     try {
-      const stored = await chrome.storage.local.get(['conversations', 'activeConversationId']);
-      if (stored.conversations) {
-        this.conversations = new Map(Object.entries(stored.conversations));
+      const stored = await chrome.storage.local.get(['conversationsByPage', 'activeConversationByPage']);
+      if (stored.conversationsByPage) {
+        // Convert stored object back to nested Maps
+        this.conversationsByPage = new Map();
+        Object.entries(stored.conversationsByPage).forEach(([pageKey, conversations]) => {
+          this.conversationsByPage.set(pageKey, new Map(Object.entries(conversations)));
+        });
       }
-      this.activeConversationId = stored.activeConversationId || null;
+      if (stored.activeConversationByPage) {
+        this.activeConversationByPage = new Map(Object.entries(stored.activeConversationByPage));
+      }
     } catch (error) {
       console.error('Failed to load conversations:', error);
     }
@@ -30,54 +40,128 @@ class ConversationManager {
 
   async saveConversations() {
     try {
-      const conversationsObj = Object.fromEntries(this.conversations);
+      // Convert nested Maps to objects for storage
+      const conversationsByPageObj = {};
+      this.conversationsByPage.forEach((conversations, pageKey) => {
+        conversationsByPageObj[pageKey] = Object.fromEntries(conversations);
+      });
+      
+      const activeConversationByPageObj = Object.fromEntries(this.activeConversationByPage);
+      
       await chrome.storage.local.set({
-        conversations: conversationsObj,
-        activeConversationId: this.activeConversationId
+        conversationsByPage: conversationsByPageObj,
+        activeConversationByPage: activeConversationByPageObj
       });
     } catch (error) {
       console.error('Failed to save conversations:', error);
     }
   }
 
+  async updateCurrentPage() {
+    try {
+      const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+      const tab = tabs[0];
+      if (tab) {
+        const url = new URL(tab.url);
+        this.currentPageKey = `${url.hostname}${url.pathname}`;
+        
+        // Initialize conversations for this page if not exists
+        if (!this.conversationsByPage.has(this.currentPageKey)) {
+          this.conversationsByPage.set(this.currentPageKey, new Map());
+        }
+      }
+    } catch (error) {
+      console.error('Failed to update current page:', error);
+      this.currentPageKey = 'unknown';
+      if (!this.conversationsByPage.has(this.currentPageKey)) {
+        this.conversationsByPage.set(this.currentPageKey, new Map());
+      }
+    }
+  }
+
+  setupTabChangeListener() {
+    // Listen for tab updates (URL changes)
+    chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+      if (changeInfo.status === 'complete' && tab.active) {
+        await this.updateCurrentPage();
+        this.updateUI();
+      }
+    });
+
+    // Listen for tab activation (switching between tabs)
+    chrome.tabs.onActivated.addListener(async (activeInfo) => {
+      await this.updateCurrentPage();
+      this.updateUI();
+    });
+  }
+
+  getCurrentPageConversations() {
+    if (!this.currentPageKey) return new Map();
+    return this.conversationsByPage.get(this.currentPageKey) || new Map();
+  }
+
+  getCurrentActiveConversationId() {
+    if (!this.currentPageKey) return null;
+    return this.activeConversationByPage.get(this.currentPageKey) || null;
+  }
+
   createConversation(title = null) {
+    if (!this.currentPageKey) return null;
+    
     const id = Date.now().toString();
+    const currentConversations = this.getCurrentPageConversations();
     const conversation = {
       id,
-      title: title || `Chat ${this.conversations.size + 1}`,
+      title: title || `Chat ${currentConversations.size + 1}`,
       messages: [],
       createdAt: Date.now(),
-      updatedAt: Date.now()
+      updatedAt: Date.now(),
+      pageKey: this.currentPageKey
     };
     
-    this.conversations.set(id, conversation);
-    this.activeConversationId = id;
+    currentConversations.set(id, conversation);
+    this.activeConversationByPage.set(this.currentPageKey, id);
     this.saveConversations();
     this.updateUI();
     return id;
   }
 
   deleteConversation(id) {
-    this.conversations.delete(id);
-    if (this.activeConversationId === id) {
-      const remaining = Array.from(this.conversations.keys());
-      this.activeConversationId = remaining.length > 0 ? remaining[0] : null;
+    if (!this.currentPageKey) return;
+    
+    const currentConversations = this.getCurrentPageConversations();
+    currentConversations.delete(id);
+    
+    const currentActiveId = this.getCurrentActiveConversationId();
+    if (currentActiveId === id) {
+      const remaining = Array.from(currentConversations.keys());
+      if (remaining.length > 0) {
+        this.activeConversationByPage.set(this.currentPageKey, remaining[0]);
+      } else {
+        this.activeConversationByPage.delete(this.currentPageKey);
+      }
     }
     this.saveConversations();
     this.updateUI();
   }
 
   setActiveConversation(id) {
-    if (this.conversations.has(id)) {
-      this.activeConversationId = id;
+    if (!this.currentPageKey) return;
+    
+    const currentConversations = this.getCurrentPageConversations();
+    if (currentConversations.has(id)) {
+      this.activeConversationByPage.set(this.currentPageKey, id);
       this.saveConversations();
       this.updateUI();
     }
   }
 
   addMessage(conversationId, message) {
-    if (this.conversations.has(conversationId)) {
-      const conversation = this.conversations.get(conversationId);
+    if (!this.currentPageKey) return;
+    
+    const currentConversations = this.getCurrentPageConversations();
+    if (currentConversations.has(conversationId)) {
+      const conversation = currentConversations.get(conversationId);
       conversation.messages.push({
         ...message,
         timestamp: Date.now()
@@ -95,7 +179,11 @@ class ConversationManager {
   }
 
   getActiveConversation() {
-    return this.activeConversationId ? this.conversations.get(this.activeConversationId) : null;
+    const activeId = this.getCurrentActiveConversationId();
+    if (!activeId) return null;
+    
+    const currentConversations = this.getCurrentPageConversations();
+    return currentConversations.get(activeId) || null;
   }
 
   setupEventListeners() {
@@ -145,12 +233,14 @@ class ConversationManager {
     if (!content) return;
 
     // Create conversation if none exists
-    if (!this.activeConversationId) {
+    const activeId = this.getCurrentActiveConversationId();
+    if (!activeId) {
       this.createConversation();
     }
 
     // Add user message
-    this.addMessage(this.activeConversationId, {
+    const currentActiveId = this.getCurrentActiveConversationId();
+    this.addMessage(currentActiveId, {
       sender: 'user',
       content: content
     });
@@ -174,7 +264,8 @@ class ConversationManager {
       const response = await this.processMessage(content, tab);
       
       // Add AI response
-      this.addMessage(this.activeConversationId, {
+      const finalActiveId = this.getCurrentActiveConversationId();
+      this.addMessage(finalActiveId, {
         sender: 'ai',
         content: response.content,
         jsonData: response.jsonData,
@@ -184,7 +275,8 @@ class ConversationManager {
       this.updateStatus('Ready');
     } catch (error) {
       console.error('Failed to process message:', error);
-      this.addMessage(this.activeConversationId, {
+      const errorActiveId = this.getCurrentActiveConversationId();
+      this.addMessage(errorActiveId, {
         sender: 'ai',
         content: 'Sorry, there was an error processing your request.',
         error: true
@@ -313,12 +405,14 @@ class ConversationManager {
     }
     conversationList.innerHTML = '';
 
-    const sortedConversations = Array.from(this.conversations.values())
+    const currentConversations = this.getCurrentPageConversations();
+    const currentActiveId = this.getCurrentActiveConversationId();
+    const sortedConversations = Array.from(currentConversations.values())
       .sort((a, b) => b.updatedAt - a.updatedAt);
 
     sortedConversations.forEach(conversation => {
       const item = document.createElement('div');
-      item.className = `conversation-item ${conversation.id === this.activeConversationId ? 'active' : ''}`;
+      item.className = `conversation-item ${conversation.id === currentActiveId ? 'active' : ''}`;
       
       const time = new Date(conversation.updatedAt).toLocaleDateString();
       
